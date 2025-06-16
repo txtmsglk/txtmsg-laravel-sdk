@@ -1,0 +1,30 @@
+{
+    "name": "txtmsg/sms-client",
+    "description": "Laravel SDK for txtmsg.lk SMS Gateway",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+      "psr-4": {
+        "Txtmsg\\SmsClient\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Txtmsg\\SmsClient\\Tests\\": "tests/"
+      }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Txtmsg\\SmsClient\\SmsClientServiceProvider"
+        ],
+        "aliases": {
+          "Txtmsg": "Txtmsg\\SmsClient\\Facades\\Txtmsg"
+        }
+      }
+    },
+    "require": {
+      "php": "^7.4|^8.0",
+      "illuminate/support": "^8.0|^9.0|^10.0"
+    }
+  }
