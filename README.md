@@ -15,7 +15,7 @@ Laravel SDK for [TXTMSG.lk](https://txtmsg.lk) SMS Gateway API v3. Send bulk SMS
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.1+
 - Laravel 13.x
 
 ## Installation
@@ -168,7 +168,7 @@ All methods return an array with the API response.
 ## Changelog
 
 ### v2.0.0
-- Dropped PHP < 8.3 and Laravel < 13 support
+- Dropped PHP < 8.1 and Laravel < 13 support
 - Replaced cURL with Laravel HTTP client
 - Added typed properties and return types
 - Added `TxtmsgException` for typed error handling
