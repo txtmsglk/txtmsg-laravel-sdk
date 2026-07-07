@@ -6,19 +6,24 @@ use Illuminate\Support\ServiceProvider;
 
 class SmsClientServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/txtmsg.php', 'txtmsg');
 
-        $this->app->singleton('txtmsg', function () {
-            return new TxtmsgClient(config('txtmsg.api_key'));
+        $this->app->singleton('txtmsg', function (): TxtmsgClient {
+            return new TxtmsgClient(
+                apiKey: config('txtmsg.api_key'),
+                baseUrl: config('txtmsg.base_url'),
+            );
         });
     }
 
-    public function boot()
+    public function boot(): void
     {
-        $this->publishes([
-            __DIR__ . '/../config/txtmsg.php' => config_path('txtmsg.php'),
-        ], 'config');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/txtmsg.php' => config_path('txtmsg.php'),
+            ], 'txtmsg-config');
+        }
     }
 }

@@ -4,27 +4,34 @@
     "type": "library",
     "license": "MIT",
     "autoload": {
-      "psr-4": {
-        "Txtmsg\\SmsClient\\": "src/"
-      }
+        "psr-4": {
+            "Txtmsg\\SmsClient\\": "src/"
+        }
     },
     "autoload-dev": {
-      "psr-4": {
-        "Txtmsg\\SmsClient\\Tests\\": "tests/"
-      }
+        "psr-4": {
+            "Txtmsg\\SmsClient\\Tests\\": "tests/"
+        }
     },
     "extra": {
-      "laravel": {
-        "providers": [
-          "Txtmsg\\SmsClient\\SmsClientServiceProvider"
-        ],
-        "aliases": {
-          "Txtmsg": "Txtmsg\\SmsClient\\Facades\\Txtmsg"
+        "laravel": {
+            "providers": [
+                "Txtmsg\\SmsClient\\SmsClientServiceProvider"
+            ],
+            "aliases": {
+                "Txtmsg": "Txtmsg\\SmsClient\\Facades\\Txtmsg"
+            }
         }
-      }
     },
     "require": {
-      "php": "^7.4|^8.0",
-      "illuminate/support": "^8.0|^9.0|^10.0"
-    }
-  }
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "illuminate/http": "^13.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "orchestra/testbench": "^9.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

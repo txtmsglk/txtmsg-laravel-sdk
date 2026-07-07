@@ -2,143 +2,172 @@
 
 namespace Txtmsg\SmsClient;
 
-use Exception;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class TxtmsgClient
 {
-    private $apiKey;
-    private $baseUrl = 'https://sms.txtmsg.lk/api/v3';
+    private string $apiKey;
 
-    public function __construct($apiKey)
+    private string $baseUrl;
+
+    public function __construct(string $apiKey, ?string $baseUrl = null)
     {
         $this->apiKey = $apiKey;
+        $this->baseUrl = $baseUrl ?? 'https://sms.txtmsg.lk/api/v3';
     }
 
-    private function request($method, $endpoint, $params = [])
+    private function request(string $method, string $endpoint, array $params = []): array
     {
+        $baseUrl = $this->baseUrl;
+
+        $urlParams = [];
         foreach ($params as $key => $value) {
-            $endpoint = str_replace('{'.$key.'}', $value, $endpoint);
+            if (str_contains($endpoint, '{' . $key . '}')) {
+                $endpoint = str_replace('{' . $key . '}', (string) $value, $endpoint);
+                $urlParams[] = $key;
+            }
         }
 
-        $url = $this->baseUrl . $endpoint;
-        $headers = [
-            'Authorization: Bearer ' . $this->apiKey,
-            'Content-Type: application/json'
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        if ($method !== 'GET' && !empty($params)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+        foreach ($urlParams as $key) {
+            unset($params[$key]);
         }
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $http = Http::withToken($this->apiKey)->withHeaders([
+            'Accept' => 'application/json',
+        ]);
 
-        if (curl_errno($ch)) {
-            throw new Exception('Request Error: ' . curl_error($ch));
+        try {
+            $response = match (strtoupper($method)) {
+                'GET' => $http->get($baseUrl . $endpoint, $params),
+                'POST' => $http->post($baseUrl . $endpoint, $params),
+                'PATCH' => $http->patch($baseUrl . $endpoint, $params),
+                'DELETE' => $http->delete($baseUrl . $endpoint, $params),
+                default => throw new TxtmsgException("Unsupported HTTP method: {$method}"),
+            };
+
+            $response->throw();
+
+            return $response->json();
+        } catch (RequestException $e) {
+            $body = $e->response->json();
+            throw new TxtmsgException(
+                $body['message'] ?? $e->getMessage(),
+                $e->response->status()
+            );
         }
-
-        curl_close($ch);
-        $decoded = json_decode($response, true);
-
-        if ($httpCode >= 400) {
-            throw new Exception($decoded['message'] ?? 'API Error');
-        }
-
-        return $decoded;
     }
 
-    // Contact Groups
-    public function viewAllContactGroups($params = []) {
+    public function viewAllContactGroups(array $params = []): array
+    {
         return $this->request('GET', '/contacts', $params);
     }
 
-    public function createContactGroup($params = []) {
+    public function createContactGroup(array $params = []): array
+    {
         return $this->request('POST', '/contacts', $params);
     }
 
-    public function viewContactGroup($groupId, $params = []) {
+    public function viewContactGroup(string $groupId, array $params = []): array
+    {
         $params['group_id'] = $groupId;
+
         return $this->request('POST', '/contacts/{group_id}/show', $params);
     }
 
-    public function updateContactGroup($groupId, $params = []) {
+    public function updateContactGroup(string $groupId, array $params = []): array
+    {
         $params['group_id'] = $groupId;
+
         return $this->request('PATCH', '/contacts/{group_id}', $params);
     }
 
-    public function deleteContactGroup($groupId, $params = []) {
+    public function deleteContactGroup(string $groupId, array $params = []): array
+    {
         $params['group_id'] = $groupId;
+
         return $this->request('DELETE', '/contacts/{group_id}', $params);
     }
 
-    // Contacts
-    public function createContact($groupId, $params = []) {
+    public function createContact(string $groupId, array $params = []): array
+    {
         $params['group_id'] = $groupId;
+
         return $this->request('POST', '/contacts/{group_id}/store', $params);
     }
 
-    public function viewContact($groupId, $uid, $params = []) {
+    public function viewContact(string $groupId, string $uid, array $params = []): array
+    {
         $params['group_id'] = $groupId;
         $params['uid'] = $uid;
+
         return $this->request('POST', '/contacts/{group_id}/search/{uid}', $params);
     }
 
-    public function updateContact($groupId, $uid, $params = []) {
+    public function updateContact(string $groupId, string $uid, array $params = []): array
+    {
         $params['group_id'] = $groupId;
         $params['uid'] = $uid;
+
         return $this->request('PATCH', '/contacts/{group_id}/update/{uid}', $params);
     }
 
-    public function deleteContact($groupId, $uid, $params = []) {
+    public function deleteContact(string $groupId, string $uid, array $params = []): array
+    {
         $params['group_id'] = $groupId;
         $params['uid'] = $uid;
+
         return $this->request('DELETE', '/contacts/{group_id}/delete/{uid}', $params);
     }
 
-    public function viewAllContactsInGroup($groupId, $params = []) {
+    public function viewAllContactsInGroup(string $groupId, array $params = []): array
+    {
         $params['group_id'] = $groupId;
+
         return $this->request('POST', '/contacts/{group_id}/all', $params);
     }
 
-    // SMS
-    public function sendSMS($params = []) {
+    public function sendSMS(array $params = []): array
+    {
         return $this->request('POST', '/sms/send', $params);
     }
 
-    public function sendSMSViaGet($params = []) {
+    public function sendSMSViaGet(array $params = []): array
+    {
         return $this->request('GET', '/http/sms/send', $params);
     }
 
-    public function sendCampaign($params = []) {
+    public function sendCampaign(array $params = []): array
+    {
         return $this->request('POST', '/sms/campaign', $params);
     }
 
-    public function viewSMS($uid, $params = []) {
+    public function viewSMS(string $uid, array $params = []): array
+    {
         $params['uid'] = $uid;
+
         return $this->request('GET', '/sms/{uid}', $params);
     }
 
-    public function viewAllMessages($params = []) {
+    public function viewAllMessages(array $params = []): array
+    {
         return $this->request('GET', '/sms', $params);
     }
 
-    public function viewCampaign($uid, $params = []) {
+    public function viewCampaign(string $uid, array $params = []): array
+    {
         $params['uid'] = $uid;
+
         return $this->request('GET', '/campaign/{uid}/view', $params);
     }
 
-    // Profile
-    public function viewBalance($params = []) {
+    public function viewBalance(array $params = []): array
+    {
         return $this->request('GET', '/balance', $params);
     }
 
-    public function viewProfile($params = []) {
+    public function viewProfile(array $params = []): array
+    {
         return $this->request('GET', '/me', $params);
     }
 }
