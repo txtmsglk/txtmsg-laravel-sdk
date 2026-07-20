@@ -1,6 +1,6 @@
 # TXTMSG.lk SMS Client for Laravel — Laravel SMS Gateway Integration for Sri Lanka
 
-Laravel SDK for [TXTMSG.lk](https://txtmsg.lk) SMS Gateway API v3. Send bulk SMS, transactional SMS, and scheduled messages from your Laravel 13 application using the TXTMSG.lk REST API. The official Laravel SMS package for Sri Lanka's reliable SMS gateway.
+Laravel SDK for [TXTMSG.lk](https://txtmsg.lk) — [Sri Lanka's SMS gateway](https://txtmsg.lk) API v3. Send [bulk SMS](https://txtmsg.lk/pricing), transactional SMS, and scheduled messages from your Laravel 13 application. Get started with [free trial credits](https://txtmsg.lk/register).
 
 ## Features
 
@@ -51,6 +51,8 @@ TXTMSG_BASE_URL=https://sms.txtmsg.lk/api/v3
 ```
 
 You can obtain your API key from your [TXTMSG.lk dashboard](https://txtmsg.lk).
+
+[Get your API key →](https://txtmsg.lk/register)
 
 ## Quick Start
 
@@ -163,7 +165,20 @@ All methods return an array with the API response.
 
 ## About TXTMSG.lk
 
-[TXTMSG.lk](https://txtmsg.lk) is a Sri Lankan SMS gateway provider offering reliable bulk SMS services, transactional SMS APIs, and messaging solutions for businesses of all sizes. The TXTMSG.lk API v3 provides RESTful endpoints for SMS delivery, contact management, and campaign automation with worldwide coverage.
+[TXTMSG.lk](https://txtmsg.lk) is a [Sri Lankan SMS gateway](https://txtmsg.lk) provider offering reliable [bulk SMS services](https://txtmsg.lk/pricing), [transactional SMS APIs](https://txtmsg.lk/developers), and [messaging solutions](https://txtmsg.lk/solutions) for businesses of all sizes. The TXTMSG.lk API v3 provides RESTful endpoints for SMS delivery, contact management, and campaign automation with worldwide coverage.
+
+## Links
+
+- 🌐 [Website](https://txtmsg.lk)
+- 💰 [Pricing](https://txtmsg.lk/pricing)
+- 📖 [API Documentation](https://documentation.txtmsg.lk)
+- 🧪 [Postman Collection](https://documenter.getpostman.com/view/21165322/2sB2qf9e5y)
+- 🚀 [Create Free Account](https://txtmsg.lk/register)
+
+## Support
+
+- Email: support@txtmsg.lk
+- Phone: +94 773 59 304 / +94 716 170 000
 
 ## Changelog
 
